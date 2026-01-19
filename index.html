@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AI Hang Out with Q - Official Protocol</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Sans+KR:wght@300;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --matrix-green: #00ff41;
+            --matrix-dark: #003b00;
+            --matrix-glow: rgba(0, 255, 65, 0.4);
+            --bg-color: #050505;
+            --text-color: #d1d1d1;
+            --border: 1px solid rgba(0, 255, 65, 0.2);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Noto Sans KR', sans-serif;
+            overflow-x: hidden;
+            line-height: 1.6;
+            word-break: keep-all;
+        }
+
+        /* --- Background Matrix --- */
+        #matrix-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            opacity: 0.4;
+        }
+
+        .container { width: 100%; padding: 0 25px; position: relative; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .neon { color: var(--matrix-green); text-shadow: 0 0 10px var(--matrix-glow); }
+
+        /* --- Header --- */
+        header {
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .system-status { font-size: 0.7rem; color: var(--matrix-green); margin-bottom: 10px; letter-spacing: 2px; }
+        
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: #fff;
+            line-height: 0.9;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        .typewriter {
+            font-size: 0.9rem;
+            color: var(--matrix-green);
+            min-height: 1.2em;
+            border-right: 2px solid var(--matrix-green);
+            padding-right: 5px;
+        }
+
+        /* --- Section Styling --- */
+        section { padding: 60px 0; border-bottom: var(--border); }
+        .section-label {
+            font-size: 0.7rem;
+            color: var(--matrix-green);
+            display: block;
+            margin-bottom: 15px;
+            opacity: 0.8;
+        }
+        h2 { font-size: 1.8rem; color: #fff; margin-bottom: 20px; line-height: 1.3; }
+
+        /* --- Mission & Values --- */
+        .highlight-box {
+            background: rgba(0, 255, 65, 0.05);
+            border-left: 3px solid var(--matrix-green);
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .grid-cards { display: grid; grid-template-columns: 1fr; gap: 15px; margin-top: 30px; }
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            border: var(--border);
+            padding: 20px;
+            border-radius: 4px;
+        }
+        .card h3 { color: var(--matrix-green); font-size: 1.1rem; margin-bottom: 10px; }
+        .card p { font-size: 0.9rem; color: #aaa; }
+
+        /* --- Monthly Routine --- */
+        .routine-step { display: flex; gap: 15px; margin-bottom: 25px; }
+        .step-time {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--matrix-green); color: #000;
+            padding: 2px 8px; font-size: 0.8rem; font-weight: bold; height: fit-content;
+        }
+        .step-info h4 { color: #fff; font-size: 1rem; margin-bottom: 5px; }
+        .step-info p { font-size: 0.85rem; color: #888; }
+
+        /* --- Discord Base --- */
+        .discord-base {
+            background: #5865F222; border: 1px solid #5865F2;
+            padding: 25px; margin-top: 20px; border-radius: 8px;
+        }
+
+        /* --- Hang Out Days Grid --- */
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .day-node {
+            border: 1px solid var(--matrix-dark);
+            padding: 15px;
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(0, 255, 65, 0.02);
+            transition: 0.3s;
+        }
+        .day-node:hover {
+            border-color: var(--matrix-green);
+            box-shadow: 0 0 10px var(--matrix-glow);
+        }
+        .day-node .month { display: block; font-size: 0.7rem; color: #666; margin-bottom: 5px; }
+        .day-node .date { display: block; font-size: 1.1rem; color: var(--matrix-green); font-weight: bold; }
+
+        /* --- Participation --- */
+        .lock-panel {
+            text-align: center; padding: 40px 20px;
+            border: 2px dashed var(--matrix-dark); margin-top: 20px;
+        }
+
+        .cyber-btn {
+            display: block; width: 100%; padding: 20px;
+            background: var(--matrix-green); color: #000;
+            text-align: center; text-decoration: none; font-weight: 900;
+            text-transform: uppercase; letter-spacing: 2px; margin-top: 20px;
+            box-shadow: 0 0 15px var(--matrix-glow);
+        }
+
+        footer { padding: 40px 25px; font-size: 0.7rem; color: #444; text-align: center; line-height: 2; }
+
+        .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s ease-out; }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        @media (min-width: 600px) {
+            .schedule-grid { grid-template-columns: repeat(4, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="matrix-bg"></canvas>
+
+    <header class="container">
+        <div class="system-status mono">[ INITIALIZING PROTOCOL... ]</div>
+        <h1>AI HANG OUT<br><span class="neon">with Q</span></h1>
+        <div id="typewriter" class="mono typewriter">> </div>
+    </header>
+
+    <!-- 01. Mission -->
+    <section class="container reveal">
+        <span class="section-label mono">LOG_01: MISSION</span>
+        <h2>AI를 전문가의 영역이 아닌<br><span class="neon">모두를 위한 도구</span>로.</h2>
+        <div class="highlight-box">
+            <p>우리는 복잡한 기술 용어 대신 <strong>누구나 이해할 수 있는 언어</strong>를 선택합니다. 혼자 배우는 고립된 학습이 아닌, <strong>함께 실험하고 나누는 시스템</strong>을 지향합니다.</p>
+        </div>
+    </section>
+
+    <!-- 02. System Operations -->
+    <section class="container reveal">
+        <span class="section-label mono">LOG_02: SYSTEM_OPS</span>
+        <div class="card" style="margin-bottom: 30px;">
+            <p class="mono" style="font-size: 0.8rem; margin-bottom: 10px;">[ DEPLOYMENT_INFO ]</p>
+            <p>• <strong>START:</strong> 2026. 02<br>
+               • <strong>CYCLE:</strong> 매월 1회 (첫째 주 토요일)<br>
+               • <strong>TIME:</strong> 09:00 - 10:00 (KST)<br>
+               • <strong>TYPE:</strong> Online Live Protocol</p>
+        </div>
+        <div class="discord-base">
+            <h3 class="mono" style="font-size: 1rem; margin-bottom: 10px;">BASE: DISCORD</h3>
+            <p style="font-size: 0.85rem; color: #ccc;">자료 아카이빙과 비동기 대화가 가능한 AI 시대 최적의 지식 커뮤니티 공간입니다.</p>
+        </div>
+    </section>
+
+    <!-- 03. Hang Out Days 2026 (NEW) -->
+    <section class="container reveal">
+        <span class="section-label mono">LOG_03: HANG_OUT_DAYS_2026</span>
+        <h2>프로토콜 가동 예정일</h2>
+        <p style="font-size: 0.85rem; color: #666; margin-bottom: 20px;">* 매월 첫째 주 토요일 AM 09:00 기준</p>
+        
+        <div class="schedule-grid">
+            <div class="day-node"><span class="month">FEB</span><span class="date">02.07</span></div>
+            <div class="day-node"><span class="month">MAR</span><span class="date">03.07</span></div>
+            <div class="day-node"><span class="month">APR</span><span class="date">04.04</span></div>
+            <div class="day-node"><span class="month">MAY</span><span class="date">05.02</span></div>
+            <div class="day-node"><span class="month">JUN</span><span class="date">06.06</span></div>
+            <div class="day-node"><span class="month">JUL</span><span class="date">07.04</span></div>
+            <div class="day-node"><span class="month">AUG</span><span class="date">08.01</span></div>
+            <div class="day-node"><span class="month">SEP</span><span class="date">09.05</span></div>
+            <div class="day-node"><span class="month">OCT</span><span class="date">10.03</span></div>
+            <div class="day-node"><span class="month">NOV</span><span class="date">11.07</span></div>
+            <div class="day-node"><span class="month">DEC</span><span class="date">12.05</span></div>
+            <div class="day-node" style="opacity: 0.3;"><span class="month">JAN</span><span class="date">2027</span></div>
+        </div>
+    </section>
+
+    <!-- 04. Outcomes -->
+    <section class="container reveal">
+        <span class="section-label mono">LOG_04: USER_BENEFITS</span>
+        <h2>이 과정의 끝에서 당신은<br><span class="neon">변화의 주도권</span>을 잡습니다.</h2>
+        <ul style="list-style: none; font-size: 0.95rem; color: #aaa;">
+            <li style="margin-bottom: 15px;">✓ AI 뉴스의 본질을 꿰뚫어 보는 안목</li>
+            <li style="margin-bottom: 15px;">✓ AI를 '대체자'가 아닌 '확장 도구'로 활용</li>
+            <li style="margin-bottom: 15px;">✓ 다양한 산업 관점이 연결된 강력한 네트워크</li>
+        </ul>
+    </section>
+
+    <!-- 05. Participation -->
+    <section class="container reveal" style="border: none;">
+        <span class="section-label mono">LOG_05: ACCESS_PROTOCOL</span>
+        <div class="lock-panel">
+            <h2 class="mono">TRUST-BASED</h2>
+            <p style="font-size: 0.85rem; color: #666;">기존 멤버의 추천 및 초대 링크를 통해서만 접속 권한이 부여됩니다.</p>
+        </div>
+        <a href="https://discord.gg/6UPGtMVc" class="cyber-btn">YOUR AI JOURNEY BEGINS</a>
+    </section>
+
+    <footer>
+        <p class="mono">SYSTEM: AI HANG OUT with Q<br>
+        v2.0 // EST. 2026. 02<br>
+        DESIGNED FOR HUMAN EXTENSION</p>
+    </footer>
+
+    <script>
+        // --- Matrix Rain Logic ---
+        const canvas = document.getElementById('matrix-bg');
+        const ctx = canvas.getContext('2d');
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        const characters = '01ｱｲｳｴｵｶｷｸｹｺｻｼｽｾｿﾀﾁﾂﾃﾄﾅﾆﾇﾈﾉﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛﾜﾝ';
+        const fontSize = 16;
+        const columns = Math.floor(width / fontSize);
+        const drops = Array(columns).fill(1);
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(5, 5, 5, 0.15)';
+            ctx.fillRect(0, 0, width, height);
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = characters.charAt(Math.floor(Math.random() * characters.length));
+                ctx.fillStyle = '#fff';
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                ctx.fillStyle = '#0f4';
+                ctx.fillText(text, i * fontSize, (drops[i] - 1) * fontSize);
+                if (drops[i] * fontSize > height && Math.random() > 0.98) drops[i] = 0;
+                drops[i]++;
+            }
+        }
+
+        // --- Typewriter ---
+        const typeTarget = document.getElementById('typewriter');
+        const messages = [
+            "> Wake up, user...",
+            "> 2026 프로토콜 활성화 중...",
+            "> AI Hang Out with Q v2.0",
+            "> 첫 번째 세션: 2026. 02. 07"
+        ];
+        let msgIdx = 0, charIdx = 0;
+
+        function type() {
+            if (charIdx < messages[msgIdx].length) {
+                typeTarget.textContent += messages[msgIdx].charAt(charIdx);
+                charIdx++;
+                setTimeout(type, 80);
+            } else {
+                setTimeout(erase, 2000);
+            }
+        }
+
+        function erase() {
+            if (charIdx > 0) {
+                typeTarget.textContent = messages[msgIdx].substring(0, charIdx - 1);
+                charIdx--;
+                setTimeout(erase, 40);
+            } else {
+                msgIdx = (msgIdx + 1) % messages.length;
+                setTimeout(type, 500);
+            }
+        }
+
+        // --- Reveal Scroll ---
+        function reveal() {
+            const reveals = document.querySelectorAll(".reveal");
+            reveals.forEach(el => {
+                const windowHeight = window.innerHeight;
+                const elementTop = el.getBoundingClientRect().top;
+                if (elementTop < windowHeight - 100) el.classList.add("active");
+            });
+        }
+
+        window.addEventListener("scroll", reveal);
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        });
+        setInterval(drawMatrix, 50);
+        type();
+        reveal();
+    </script>
+</body>
+</html>
